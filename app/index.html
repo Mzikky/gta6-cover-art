@@ -3,20 +3,64 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cover Snap</title>
+<title>Vice Sunset Cover Studio — GTA-style cover maker</title>
+<meta name="description" content="Turn any photo and caption into GTA-style multi-panel cover art, offline in your browser.">
 <link rel="stylesheet" href="./style.css">
 </head>
 <body>
 <main class="app">
-  <section class="controls">
-    <h1>Cover Snap</h1>
-    <p>A photo and a caption, made into a square cover.</p>
-    <label>Photo <input id="photo" type="file" accept="image/*"></label>
-    <label>Caption <input id="caption" type="text" maxlength="40" value="Sunset Heist"></label>
-    <button id="export" type="button">Export PNG 1080 x 1080</button>
+  <section class="controls" aria-label="Cover editor">
+    <header>
+      <h1>Vice Sunset<br>Cover Studio</h1>
+      <p>Your photo + a caption, made into a GTA-style cover. Two samples are loaded already — type a caption and export.</p>
+    </header>
+
+    <fieldset>
+      <legend>Photos · up to 4 panels</legend>
+      <div id="slots" class="slots"></div>
+      <p class="hint">Click a panel on the cover to select it, then drag its photo to reposition it. Drop image files anywhere to add them.</p>
+      <input id="picker" type="file" accept="image/*" hidden>
+    </fieldset>
+
+    <fieldset>
+      <legend>Crop · selected panel</legend>
+      <label class="slider-row">Zoom <input id="zoom" type="range" min="1" max="2.5" step="0.05" value="1"> <span id="zoom-label">1.0×</span></label>
+      <button id="reset-crop" type="button" class="secondary">Reset crop</button>
+    </fieldset>
+
+    <fieldset>
+      <legend>Words</legend>
+      <label>Caption <input id="caption" type="text" maxlength="32" value="Sunset Heist" autocomplete="off"></label>
+      <label>Subtitle <input id="subtitle" type="text" maxlength="40" value="Leonida · 2026" autocomplete="off"></label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Style</legend>
+      <div class="chip-row" role="group" aria-label="Colour grade">
+        <button type="button" data-preset="sunset" class="chip active">Sunset</button>
+        <button type="button" data-preset="neon" class="chip">Neon Nights</button>
+        <button type="button" data-preset="vice" class="chip">Vice</button>
+        <button type="button" data-preset="mono" class="chip">Mono</button>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Export size</legend>
+      <div class="chip-row" role="group" aria-label="Export size">
+        <button type="button" data-size="1080x1080" class="chip active">1080 × 1080</button>
+        <button type="button" data-size="1080x1350" class="chip">1080 × 1350</button>
+        <button type="button" data-size="1920x1080" class="chip">1920 × 1080</button>
+      </div>
+    </fieldset>
+
+    <button id="export" type="button" class="primary">Export PNG</button>
     <p id="status" role="status"></p>
+    <p class="offline-note">Fully offline — your photos never leave this machine.</p>
   </section>
-  <canvas id="cover" width="1080" height="1080" aria-label="The cover"></canvas>
+
+  <section class="preview" aria-label="Cover preview">
+    <canvas id="cover" width="1080" height="1080" aria-label="The cover"></canvas>
+  </section>
 </main>
 <script type="module" src="./src/main.js"></script>
 </body>

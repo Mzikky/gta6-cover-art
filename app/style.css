@@ -1,12 +1,88 @@
-html, body { margin: 0; height: 100%; background: #f2f0f4; color: #1d1b22; font: 15px/1.4 system-ui, sans-serif; }
-.app { display: flex; gap: 32px; align-items: center; justify-content: center; height: 100%; padding: 24px; box-sizing: border-box; }
-.controls { display: flex; flex-direction: column; gap: 14px; width: 280px; }
-.controls h1 { margin: 0; font-size: 28px; }
-.controls p { margin: 0; color: #5c5866; }
-label { display: flex; flex-direction: column; gap: 6px; font-weight: 600; }
-input[type=text] { font: inherit; padding: 8px; border: 1px solid #c9c4d1; border-radius: 6px; }
-button { font: inherit; font-weight: 700; padding: 10px; border: 0; border-radius: 6px; background: #1d1b22; color: #fff; cursor: pointer; }
-canvas { width: min(70vh, 60vw); height: min(70vh, 60vw); box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2); }
+/* Vice Sunset Cover Studio — dark neon editor chrome around a bright cover. */
+:root {
+  --bg: #120a24;
+  --panel: #1d1136;
+  --panel-2: #251748;
+  --line: #3a2a63;
+  --text: #f4eefc;
+  --muted: #b7a8d8;
+  --accent: #ff5e78;
+  --accent-2: #ffd166;
+  --neon: #00f5d4;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); font: 15px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+.app { display: flex; gap: 28px; height: 100%; padding: 22px; }
+.controls { width: 320px; flex: none; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding-right: 4px; }
+.controls header h1 {
+  margin: 0 0 6px; font-size: 30px; line-height: 1.02; font-weight: 900; letter-spacing: -0.5px;
+  background: linear-gradient(92deg, var(--accent-2), var(--accent) 55%, #ff2e88);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.controls header p { margin: 0; color: var(--muted); font-size: 13.5px; }
+fieldset { margin: 0; padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+legend { padding: 0 6px; font-size: 12px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent-2); }
+label { display: flex; flex-direction: column; gap: 6px; font-weight: 600; font-size: 13px; margin-bottom: 10px; }
+label:last-child { margin-bottom: 0; }
+input[type=text] {
+  font: inherit; color: var(--text); padding: 9px 10px; border: 1px solid var(--line);
+  border-radius: 8px; background: var(--panel-2); outline: none;
+}
+input[type=text]:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(255, 94, 120, 0.25); }
+.slots { display: flex; gap: 8px; }
+.slot {
+  position: relative; width: 64px; height: 64px; flex: none; padding: 0; border: 2px dashed var(--line);
+  border-radius: 10px; background: var(--panel-2); color: var(--muted); font-size: 26px; cursor: pointer; overflow: hidden;
+}
+.slot canvas { width: 100%; height: 100%; object-fit: cover; display: block; }
+.slot.filled { border-style: solid; border-color: var(--line); }
+.slot.active { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(255, 94, 120, 0.45); }
+.slot-remove {
+  position: absolute; top: 1px; right: 4px; font-size: 16px; line-height: 1; color: #fff;
+  text-shadow: 0 1px 3px #000; cursor: pointer;
+}
+.hint { margin: 10px 0 0; color: var(--muted); font-size: 12.5px; }
+.slider-row { flex-direction: row; align-items: center; gap: 10px; }
+.slider-row input[type=range] { flex: 1; accent-color: var(--accent); }
+#zoom-label { min-width: 38px; text-align: right; color: var(--accent-2); }
+.chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  font: inherit; font-weight: 700; font-size: 13px; padding: 7px 12px; border: 1px solid var(--line);
+  border-radius: 999px; background: var(--panel-2); color: var(--text); cursor: pointer;
+}
+.chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+button.secondary {
+  font: inherit; font-weight: 700; padding: 8px 12px; border: 1px solid var(--line);
+  border-radius: 8px; background: var(--panel-2); color: var(--text); cursor: pointer;
+}
+button.primary {
+  font: inherit; font-weight: 900; font-size: 17px; letter-spacing: 0.02em; padding: 14px;
+  border: 0; border-radius: 10px; cursor: pointer; color: #1a0b2e;
+  background: linear-gradient(92deg, var(--accent-2), var(--accent));
+  box-shadow: 0 6px 22px rgba(255, 94, 120, 0.35);
+}
+button.primary:hover { filter: brightness(1.07); }
+#status { margin: 0; min-height: 20px; color: var(--neon); font-size: 13px; }
+.offline-note { margin: 0; color: var(--muted); font-size: 12px; }
+.preview { flex: 1; min-width: 0; display: flex; align-items: center; justify-content: center; }
+#cover {
+  max-width: 100%; max-height: 100%; width: auto; height: auto;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  border-radius: 4px; touch-action: none;
+}
+body.dragging::after {
+  content: "Drop photos to add them"; position: fixed; inset: 12px; z-index: 10;
+  display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 900;
+  color: var(--accent-2); border: 3px dashed var(--accent); border-radius: 16px;
+  background: rgba(18, 10, 36, 0.82); pointer-events: none;
+}
+/* Screenshot mode: the cover alone, filling the viewport. */
 body.shot-cover .controls { display: none; }
-body.shot-cover .app { padding: 0; }
-body.shot-cover canvas { width: 100vw; height: 100vh; box-shadow: none; }
+body.shot-cover .app { padding: 0; gap: 0; }
+body.shot-cover .preview { width: 100vw; height: 100vh; }
+body.shot-cover #cover { width: 100vw; height: 100vh; max-width: none; max-height: none; border-radius: 0; box-shadow: none; }
+@media (max-width: 760px) {
+  .app { flex-direction: column; overflow-y: auto; }
+  .controls { width: 100%; overflow: visible; }
+  .preview { min-height: 60vh; }
+}
